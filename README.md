@@ -22,20 +22,41 @@ It shows how to authenticate, load syndicated product content, and display it in
 - Flutter SDK compatible with Dart **3.9.0**
 - Android Studio or Xcode (depending on target platform)
 - iOS Simulator / Android Emulator or physical device
+- Local **`flix_inpage`** module (required by path dependency)
+
+---
+
+## Required Module: `flix_inpage`
+
+This demo app requires the **Flix InPage Flutter plugin** as a local module.
+
+- Plugin repository: `https://github.com/FlixmediaTech/FlixmediaFlutterSDK`
+- Expected local path (used in `pubspec.yaml`):
+  - `flix_inpage:`
+  - `  path: ../flix_inpage`
+
+If the module is missing, run:
+
+```bash
+git clone https://github.com/FlixmediaTech/FlixmediaFlutterSDK.git flix_inpage
+```
+
+and place it next to the `FlixFlutterDemo` folder.
 
 ---
 
 ## Getting Started
-1. Clone the repository.
-2. Go to the demo app folder:
+1. Clone this repository (demo app).
+2. Make sure `flix_inpage` exists next to `FlixFlutterDemo` (see section above).
+3. Go to the demo app folder:
    ```bash
    cd FlixFlutterDemo
    ```
-3. Install dependencies:
+4. Install dependencies:
    ```bash
    flutter pub get
    ```
-4. Run the app:
+5. Run the app:
    ```bash
    flutter run
    ```
