@@ -1,10 +1,10 @@
 import 'package:flix_inpage/flix_inpage.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models/product_params.dart';
 import 'pages/demo_tabs.dart';
 import 'pages/login_page.dart';
+import 'services/flix_auth_service.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -14,6 +14,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final FlixAuthService _authService = FlixAuthService();
+
   bool _isInitialized = false;
   bool _isLoading = true;
   bool _useSandbox = false;
@@ -23,13 +25,12 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    _loadInitializedFlag();
+    _finishInitialLoad();
   }
 
-  Future<void> _loadInitializedFlag() async {
-    final prefs = await SharedPreferences.getInstance();
+  void _finishInitialLoad() {
     setState(() {
-      _isInitialized = prefs.getBool('is_initialized') ?? false;
+      _isInitialized = false;
       _isLoading = false;
     });
   }
@@ -45,18 +46,28 @@ class _MyAppState extends State<MyApp> {
     });
 
     try {
-      await FlixBridge.initialize(
-        username: username,
-        password: password,
+      var didAuthenticateWithCredentials = false;
+
+      await FlixBridge.initializeWithTokenProvider(
         useSandbox: _useSandbox,
+        tokenProvider: () async {
+          if (!didAuthenticateWithCredentials) {
+            final token = await _authService.authenticate(
+              username: username,
+              password: password,
+              useSandbox: _useSandbox,
+            );
+            didAuthenticateWithCredentials = true;
+            return token;
+          }
+
+          return _authService.refreshToken();
+        },
       );
 
       if (!mounted) {
         return;
       }
-
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('is_initialized', true);
 
       setState(() {
         _isInitialized = true;
@@ -67,7 +78,8 @@ class _MyAppState extends State<MyApp> {
       }
 
       setState(() {
-        _initError = 'Sign in failed. Please check your credentials and try again.';
+        _initError =
+            'Token sign in failed. Please check your credentials and try again.';
       });
     } finally {
       if (mounted) {
@@ -79,9 +91,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('is_initialized');
-
     setState(() {
       _isInitialized = false;
       _selectedProductParams = null;
