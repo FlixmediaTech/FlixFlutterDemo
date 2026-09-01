@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 import 'models/product_params.dart';
 import 'pages/demo_tabs.dart';
-import 'pages/login_page.dart';
 import 'services/flix_auth_service.dart';
 
 class MyApp extends StatefulWidget {
@@ -17,29 +16,12 @@ class _MyAppState extends State<MyApp> {
   final FlixAuthService _authService = FlixAuthService();
 
   bool _isInitialized = false;
-  bool _isLoading = true;
+  bool _isLoading = false;
   bool _useSandbox = false;
   String? _initError;
   ProductParams? _selectedProductParams;
 
-  @override
-  void initState() {
-    super.initState();
-    _finishInitialLoad();
-  }
-
-  void _finishInitialLoad() {
-    setState(() {
-      _isInitialized = false;
-      _isLoading = false;
-    });
-  }
-
-  Future<void> _signIn(String username, String password) async {
-    if (_isLoading) {
-      return;
-    }
-
+  Future<void> _signIn() async {
     setState(() {
       _isLoading = true;
       _initError = null;
@@ -53,49 +35,29 @@ class _MyAppState extends State<MyApp> {
         tokenProvider: () async {
           if (!didAuthenticateWithCredentials) {
             final token = await _authService.authenticate(
-              username: username,
-              password: password,
+              username: 'flixmediaqa',
+              password: r'FlixQa99&$',
               useSandbox: _useSandbox,
             );
             didAuthenticateWithCredentials = true;
             return token;
           }
-
           return _authService.refreshToken();
         },
       );
 
-      if (!mounted) {
-        return;
-      }
-
+      if (!mounted) return;
       setState(() {
         _isInitialized = true;
+        _isLoading = false;
       });
     } catch (error) {
-      if (!mounted) {
-        return;
-      }
-
+      if (!mounted) return;
       setState(() {
-        _initError =
-            'Token sign in failed. Please check your credentials and try again.';
+        _initError = error.toString();
+        _isLoading = false;
       });
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
     }
-  }
-
-  Future<void> _logout() async {
-    setState(() {
-      _isInitialized = false;
-      _selectedProductParams = null;
-      _initError = null;
-    });
   }
 
   @override
@@ -115,18 +77,65 @@ class _MyAppState extends State<MyApp> {
                   _selectedProductParams = params;
                 });
               },
-              onLogout: _logout,
-            )
-          : LoginPage(
-              isLoading: _isLoading,
-              initError: _initError,
-              useSandbox: _useSandbox,
-              onUseSandboxChanged: (value) {
+              onLogout: () {
                 setState(() {
-                  _useSandbox = value;
+                  _isInitialized = false;
+                  _selectedProductParams = null;
                 });
               },
-              onSignIn: _signIn,
+            )
+          : Scaffold(
+              body: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'Flix SDK Demo',
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 32),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text('Production'),
+                          Switch(
+                            value: _useSandbox,
+                            onChanged: (val) => setState(() => _useSandbox = val),
+                          ),
+                          const Text('Alpha'),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      if (_initError != null) ...[
+                        Text(
+                          _initError!,
+                          style: const TextStyle(color: Colors.red, fontSize: 12),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                      SizedBox(
+                        width: double.infinity,
+                        child: FilledButton(
+                          onPressed: _isLoading ? null : _signIn,
+                          child: _isLoading
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : const Text('Sign In'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
     );
   }

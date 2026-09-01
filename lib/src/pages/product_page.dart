@@ -112,6 +112,17 @@ class _ProductPageState extends State<ProductPage> {
                 parentScrollController: _scrollController,
                 productParams: widget.params.toMap(),
                 baseURL: 'https://www.example.com',
+                contentMode: 'compact',
+                flixConfig: const {
+                  'showMore': {
+                    'maxHeight': 1000,
+                    'buttonStyle': 'text',
+                    'buttonText': 'Show More',
+                    'buttonTextExpanded': 'Show Less',
+                    'buttonColor': '#0066cc',
+                    'gradientColor': '#ffffff',
+                  }
+                },
                 onError: (error) {
                   if (!mounted) return;
                   setState(() => _flixError = error);

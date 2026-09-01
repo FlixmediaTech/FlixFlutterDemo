@@ -10,7 +10,7 @@ class FlixAuthService {
   static const _prodAuthUrl =
       'https://api-syndication.flix360.io/prod/authenticate/token';
   static const _alphaAuthUrl =
-      'https://api-syndication.flix360.io/alpha/authenticate/token';
+      'https://api-alpha-syndication.flix360.io/alpha/authenticate/token';
 
   final HttpClient _httpClient;
 
