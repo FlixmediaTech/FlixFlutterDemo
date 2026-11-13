@@ -19,8 +19,8 @@ It shows how to authenticate, load syndicated product content, and display it in
 ---
 
 ## Requirements
-- Flutter SDK compatible with Dart **3.9.0**
-- Android Studio or Xcode (depending on target platform)
+- Flutter **3.44+** (iOS Swift Package Manager); Dart **3.9.0+**
+- Android Studio or Xcode **26.5+** (FlixMediaSDK 1.0.7)
 - iOS Simulator / Android Emulator or physical device
 - Local **`flix_inpage`** module (required by path dependency)
 
@@ -87,3 +87,10 @@ and place it next to the `FlixFlutterDemo` folder.
 
 ## License
 © FlixMedia. All rights reserved.
+
+## iOS Swift Package Manager
+
+iOS uses SPM and the sibling `../flix_inpage` plugin (1.0.8). The native
+FlixMediaSDK is pinned to FlixMediaSPM 1.0.7. The bundled plugin retains
+token authentication and token refresh. CocoaPods is not required for this
+iOS app. WebView uses `flutter_inappwebview` 6.2.0-beta.3.

@@ -1,0 +1,23 @@
+{
+  "pins" : [
+    {
+      "identity" : "flixmediaspm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/FlixmediaTech/FlixMediaSPM.git",
+      "state" : {
+        "revision" : "9b2bd9cddd9e4a22d6a12fa5caf1ef4fc9071717",
+        "version" : "1.0.7"
+      }
+    },
+    {
+      "identity" : "swift-collections",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-collections.git",
+      "state" : {
+        "revision" : "f96b909e1a9e469620bc5037c1e24e00153f376f",
+        "version" : "1.7.5"
+      }
+    }
+  ],
+  "version" : 2
+}
